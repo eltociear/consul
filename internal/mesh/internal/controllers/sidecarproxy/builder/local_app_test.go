@@ -115,6 +115,7 @@ func testIdentityRef() *pbresource.Reference {
 			Partition: "default",
 			PeerName:  "local",
 		},
+		Type: pbauth.WorkloadIdentityType,
 	}
 }
 
