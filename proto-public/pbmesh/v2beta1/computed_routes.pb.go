@@ -25,6 +25,8 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// +kubebuilder:validation:Enum=BACKEND_TARGET_DETAILS_TYPE_UNSPECIFIED;BACKEND_TARGET_DETAILS_TYPE_DIRECT;BACKEND_TARGET_DETAILS_TYPE_INDIRECT
+// +kubebuilder:validation:Type=string
 type BackendTargetDetailsType int32
 
 const (
@@ -33,7 +35,6 @@ const (
 	// not mean that the target is not also indirect though.
 	BackendTargetDetailsType_BACKEND_TARGET_DETAILS_TYPE_DIRECT BackendTargetDetailsType = 1
 	// Indirect means that the target is not directly routable from a route.
-	//
 	// One example would be for a FailoverPolicy destination.
 	BackendTargetDetailsType_BACKEND_TARGET_DETAILS_TYPE_INDIRECT BackendTargetDetailsType = 2
 )
@@ -401,7 +402,6 @@ type ComputedHTTPBackendRef struct {
 
 	// BackendTarget indicates which key in the targets map provides
 	// the rest of the configuration.
-	//
 	// If this field is set to the empty string, or is the sentinel value
 	// "NULL-ROUTE" is an indication that all of the traffic destined for this
 	// backend reference should be null routed in a format appropriate for the
@@ -754,8 +754,7 @@ func (x *ComputedTCPRouteRule) GetBackendRefs() []*ComputedTCPBackendRef {
 	return nil
 }
 
-// TODO: look into smuggling the target through a different typeURL, or just
-// skip in favor of letting the caller do their own lookups?
+// TODO: look into smuggling the target through a different typeURL, or just skip in favor of letting the caller do their own lookups?
 type ComputedTCPBackendRef struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -763,7 +762,6 @@ type ComputedTCPBackendRef struct {
 
 	// BackendTarget indicates which key in the targets map provides
 	// the rest of the configuration.
-	//
 	// If this field is set to the empty string, or is the sentinel value
 	// "NULL-ROUTE" is an indication that all of the traffic destined for this
 	// backend reference should be null routed in a format appropriate for the
@@ -1004,7 +1002,7 @@ type ComputedFailoverDestination struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// This must be a Service.
+	// BackendTarget must be a Service.
 	BackendTarget string `protobuf:"bytes,1,opt,name=backend_target,json=backendTarget,proto3" json:"backend_target,omitempty"`
 }
 

@@ -35,6 +35,9 @@ const (
 //
 // Unknown values here must result in the implementation setting the Accepted
 // Condition for the Route to status: False, with a Reason of UnsupportedValue.
+//
+// +kubebuilder:validation:Enum=PATH_MATCH_TYPE_UNSPECIFIED;PATH_MATCH_TYPE_EXACT;PATH_MATCH_TYPE_PREFIX;PATH_MATCH_TYPE_REGEX
+// +kubebuilder:validation:Type=string
 type PathMatchType int32
 
 const (
@@ -96,6 +99,9 @@ func (PathMatchType) EnumDescriptor() ([]byte, []int) {
 //
 // Unknown values here must result in the implementation setting the Accepted
 // Condition for the Route to status: False, with a Reason of UnsupportedValue.
+//
+// +kubebuilder:validation:Enum=HEADER_MATCH_TYPE_UNSPECIFIED;HEADER_MATCH_TYPE_EXACT;HEADER_MATCH_TYPE_REGEX;HEADER_MATCH_TYPE_PRESENT;HEADER_MATCH_TYPE_PREFIX;HEADER_MATCH_TYPE_SUFFIX
+// +kubebuilder:validation:Type=string
 type HeaderMatchType int32
 
 const (
@@ -155,6 +161,8 @@ func (HeaderMatchType) EnumDescriptor() ([]byte, []int) {
 	return file_pbmesh_v2beta1_http_route_proto_rawDescGZIP(), []int{1}
 }
 
+// +kubebuilder:validation:Enum=QUERY_PARAM_MATCH_TYPE_UNSPECIFIED;QUERY_PARAM_MATCH_TYPE_EXACT;QUERY_PARAM_MATCH_TYPE_REGEX;QUERY_PARAM_MATCH_TYPE_PRESENT
+// +kubebuilder:validation:Type=string
 type QueryParamMatchType int32
 
 const (
@@ -625,17 +633,14 @@ type HTTPQueryParamMatch struct {
 	// Name is the name of the HTTP query param to be matched. This must be an
 	// exact string match. (See
 	// https://tools.ietf.org/html/rfc7230#section-2.7.3).
-	//
 	// If multiple entries specify equivalent query param names, only the first
 	// entry with an equivalent name MUST be considered for a match. Subsequent
 	// entries with an equivalent query param name MUST be ignored.
-	//
 	// If a query param is repeated in an HTTP request, the behavior is purposely
 	// left undefined, since different data planes have different capabilities.
 	// However, it is recommended that implementations should match against the
 	// first value of the param if the data plane supports it, as this behavior
 	// is expected in other load balancing contexts outside of the Gateway API.
-	//
 	// Users SHOULD NOT route traffic based on repeated query params to guard
 	// themselves against potential differences in the implementations.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -950,7 +955,6 @@ type HTTPBackendRef struct {
 	// exact proportion defined here depending on the precision an implementation
 	// supports. Weight is not a percentage and the sum of weights does not need
 	// to equal 100.
-	//
 	// If only one backend is specified and it has a weight greater than 0, 100%
 	// of the traffic is forwarded to that backend. If weight is set to 0, no
 	// traffic should be forwarded for this entry. If unspecified, weight defaults

@@ -24,6 +24,8 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// +kubebuilder:validation:Enum=GRPC_METHOD_MATCH_TYPE_UNSPECIFIED;GRPC_METHOD_MATCH_TYPE_EXACT;GRPC_METHOD_MATCH_TYPE_REGEX
+// +kubebuilder:validation:Type=string
 type GRPCMethodMatchType int32
 
 const (
@@ -159,23 +161,18 @@ type GRPCRouteRule struct {
 	Matches []*GRPCRouteMatch  `protobuf:"bytes,1,rep,name=matches,proto3" json:"matches,omitempty"`
 	Filters []*GRPCRouteFilter `protobuf:"bytes,2,rep,name=filters,proto3" json:"filters,omitempty"`
 	// BackendRefs defines the backend(s) where matching requests should be sent.
-	//
 	// Failure behavior here depends on how many BackendRefs are specified and
 	// how many are invalid.
-	//
 	// If all entries in BackendRefs are invalid, and there are also no filters
 	// specified in this route rule, all traffic which matches this rule MUST
 	// receive a 500 status code.
-	//
 	// See the GRPCBackendRef definition for the rules about what makes a single
 	// GRPCBackendRef invalid.
-	//
 	// When a GRPCBackendRef is invalid, 500 status codes MUST be returned for
 	// requests that would have otherwise been routed to an invalid backend. If
 	// multiple backends are specified, and some are invalid, the proportion of
 	// requests that would otherwise have been routed to an invalid backend MUST
 	// receive a 500 status code.
-	//
 	// For example, if two backends are specified with equal weights, and one is
 	// invalid, 50 percent of traffic must receive a 500. Implementations may
 	// choose how that 50 percent is determined.
@@ -321,12 +318,10 @@ type GRPCMethodMatch struct {
 	Type GRPCMethodMatchType `protobuf:"varint,1,opt,name=type,proto3,enum=hashicorp.consul.mesh.v2beta1.GRPCMethodMatchType" json:"type,omitempty"`
 	// Value of the service to match against. If left empty or omitted, will
 	// match any service.
-	//
 	// At least one of Service and Method MUST be a non-empty string.
 	Service string `protobuf:"bytes,2,opt,name=service,proto3" json:"service,omitempty"`
 	// Value of the method to match against. If left empty or omitted, will match
 	// all services.
-	//
 	// At least one of Service and Method MUST be a non-empty string.}
 	Method string `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
 }
@@ -528,7 +523,6 @@ type GRPCBackendRef struct {
 	// exact proportion defined here depending on the precision an implementation
 	// supports. Weight is not a percentage and the sum of weights does not need
 	// to equal 100.
-	//
 	// If only one backend is specified and it has a weight greater than 0, 100%
 	// of the traffic is forwarded to that backend. If weight is set to 0, no
 	// traffic should be forwarded for this entry. If unspecified, weight defaults

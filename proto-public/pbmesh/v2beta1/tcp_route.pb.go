@@ -26,9 +26,7 @@ const (
 
 // NOTE: this should align to the GAMMA/gateway-api version, or at least be
 // easily translatable.
-//
 // https://gateway-api.sigs.k8s.io/references/spec/#gateway.networking.k8s.io/v1alpha2.TCPRoute
-//
 // This is a Resource type.
 type TCPRoute struct {
 	state         protoimpl.MessageState
@@ -156,7 +154,6 @@ type TCPBackendRef struct {
 	// exact proportion defined here depending on the precision an implementation
 	// supports. Weight is not a percentage and the sum of weights does not need
 	// to equal 100.
-	//
 	// If only one backend is specified and it has a weight greater than 0, 100%
 	// of the traffic is forwarded to that backend. If weight is set to 0, no
 	// traffic should be forwarded for this entry. If unspecified, weight defaults
