@@ -4,23 +4,21 @@
 package peering
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"strconv"
 	"testing"
-	"text/tabwriter"
 	"time"
 
+	"github.com/hashicorp/consul/api"
+	"github.com/hashicorp/consul/sdk/testutil/retry"
+	"github.com/hashicorp/consul/test/integration/consul-container/libs/utils"
 	"github.com/hashicorp/consul/testing/deployer/sprawl"
 	"github.com/hashicorp/consul/testing/deployer/sprawl/sprawltest"
 	"github.com/hashicorp/consul/testing/deployer/topology"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/hashicorp/consul/api"
-	"github.com/hashicorp/consul/sdk/testutil/retry"
-	"github.com/hashicorp/consul/test/integration/consul-container/libs/utils"
+	"github.com/hashicorp/consul/test-integ/topoutil"
 )
 
 // commonTopo helps create a shareable topology configured to represent
@@ -308,51 +306,19 @@ func (ct *commonTopo) ClusterByDatacenter(t *testing.T, name string) *topology.C
 	return nil
 }
 
-// Since CE config entries do not contain the partition field,
-// this func converts default partition to empty string.
+// Deprecated: topoutil.ConfigEntryPartition
 func ConfigEntryPartition(p string) string {
-	if p == "default" {
-		return "" // make this CE friendly
-	}
-	return p
+	return topoutil.ConfigEntryPartition(p)
 }
 
-// disableNode is a no-op if the node is already disabled.
+// Deprecated: topoutil.DisableNode
 func DisableNode(t *testing.T, cfg *topology.Config, clusterName string, nid topology.NodeID) *topology.Config {
-	nodes := cfg.Cluster(clusterName).Nodes
-	var found bool
-	for _, n := range nodes {
-		if n.ID() == nid {
-			found = true
-			if n.Disabled {
-				return cfg
-			}
-			t.Logf("disabling node %s in cluster %s", nid.String(), clusterName)
-			n.Disabled = true
-			break
-		}
-	}
-	require.True(t, found, "expected to find nodeID %q in cluster %q", nid.String(), clusterName)
-	return cfg
+	return topoutil.DisableNode(t, cfg, clusterName, nid)
 }
 
-// enableNode is a no-op if the node is already enabled.
+// Deprecated: topoutil.EnableNode
 func EnableNode(t *testing.T, cfg *topology.Config, clusterName string, nid topology.NodeID) *topology.Config {
-	nodes := cfg.Cluster(clusterName).Nodes
-	var found bool
-	for _, n := range nodes {
-		if n.ID() == nid {
-			found = true
-			if !n.Disabled {
-				return cfg
-			}
-			t.Logf("enabling node %s in cluster %s", nid.String(), clusterName)
-			n.Disabled = false
-			break
-		}
-	}
-	require.True(t, found, "expected to find nodeID %q in cluster %q", nid.String(), clusterName)
-	return cfg
+	return topoutil.EnableNode(t, cfg, clusterName, nid)
 }
 
 func setupGlobals(clu *topology.Cluster) {
@@ -458,33 +424,17 @@ func injectTenancies(clu *topology.Cluster) {
 	}
 }
 
+// Deprecated: topoutil.NewTopologyServerSet
 func newTopologyServerSet(
 	namePrefix string,
 	num int,
 	networks []string,
 	mutateFn func(i int, node *topology.Node),
 ) []*topology.Node {
-	var out []*topology.Node
-	for i := 1; i <= num; i++ {
-		name := namePrefix + strconv.Itoa(i)
-
-		node := &topology.Node{
-			Kind: topology.NodeKindServer,
-			Name: name,
-		}
-		for _, net := range networks {
-			node.Addresses = append(node.Addresses, &topology.Address{Network: net})
-		}
-
-		if mutateFn != nil {
-			mutateFn(i, node)
-		}
-
-		out = append(out, node)
-	}
-	return out
+	return topoutil.NewTopologyServerSet(namePrefix, num, networks, mutateFn)
 }
 
+// Deprecated: topoutil.NewTopologyMeshGatewaySet
 func newTopologyMeshGatewaySet(
 	nodeKind topology.NodeKind,
 	partition string,
@@ -493,133 +443,30 @@ func newTopologyMeshGatewaySet(
 	networks []string,
 	mutateFn func(i int, node *topology.Node),
 ) []*topology.Node {
-	var out []*topology.Node
-	for i := 1; i <= num; i++ {
-		name := namePrefix + strconv.Itoa(i)
-
-		node := &topology.Node{
-			Kind:      nodeKind,
-			Partition: partition,
-			Name:      name,
-			Services: []*topology.Service{{
-				ID:             topology.ServiceID{Name: "mesh-gateway"},
-				Port:           8443,
-				EnvoyAdminPort: 19000,
-				IsMeshGateway:  true,
-			}},
-		}
-		for _, net := range networks {
-			node.Addresses = append(node.Addresses, &topology.Address{Network: net})
-		}
-
-		if mutateFn != nil {
-			mutateFn(i, node)
-		}
-
-		out = append(out, node)
-	}
-	return out
+	return topoutil.NewTopologyMeshGatewaySet(nodeKind, partition, namePrefix, num, networks, mutateFn)
 }
 
-const HashicorpDockerProxy = "docker.mirror.hashicorp.services"
+// Deprecated: topoutil.HashicorpDockerProxy
+const HashicorpDockerProxy = topoutil.HashicorpDockerProxy
 
+// Deprecated: topoutil.NewFortioServiceWithDefaults
 func NewFortioServiceWithDefaults(
 	cluster string,
 	sid topology.ServiceID,
 	mut func(s *topology.Service),
 ) *topology.Service {
-	const (
-		httpPort  = 8080
-		grpcPort  = 8079
-		adminPort = 19000
-	)
-	sid.Normalize()
-
-	svc := &topology.Service{
-		ID:             sid,
-		Image:          HashicorpDockerProxy + "/fortio/fortio",
-		Port:           httpPort,
-		EnvoyAdminPort: adminPort,
-		CheckTCP:       "127.0.0.1:" + strconv.Itoa(httpPort),
-		Env: []string{
-			"FORTIO_NAME=" + cluster + "::" + sid.String(),
-		},
-		Command: []string{
-			"server",
-			"-http-port", strconv.Itoa(httpPort),
-			"-grpc-port", strconv.Itoa(grpcPort),
-			"-redirect-port", "-disabled",
-		},
-	}
-	if mut != nil {
-		mut(svc)
-	}
-	return svc
+	return topoutil.NewFortioServiceWithDefaults(cluster, sid, topology.NodeVersionV1, mut)
 }
 
-// computeRelationships will analyze a full topology and generate all of the
-// downstream/upstream information for all of them.
+// Deprecated: topoutil.ComputeRelationships
 func computeRelationships(topo *topology.Topology) []Relationship {
-	var out []Relationship
-	for _, cluster := range topo.Clusters {
-		for _, n := range cluster.Nodes {
-			for _, s := range n.Services {
-				for _, u := range s.Upstreams {
-					out = append(out, Relationship{
-						Caller:   s,
-						Upstream: u,
-					})
-				}
-			}
-		}
-	}
-	return out
+	return topoutil.ComputeRelationships(topo)
 }
 
-// renderRelationships will take the output of ComputeRelationships and display
-// it in tabular form.
+// Deprecated: topoutil.RenderRelationships
 func renderRelationships(ships []Relationship) string {
-	var buf bytes.Buffer
-	w := tabwriter.NewWriter(&buf, 0, 0, 3, ' ', tabwriter.Debug)
-	fmt.Fprintf(w, "DOWN\tnode\tservice\tport\tUP\tservice\t\n")
-	for _, r := range ships {
-		fmt.Fprintf(w,
-			"%s\t%s\t%s\t%d\t%s\t%s\t\n",
-			r.downCluster(),
-			r.Caller.Node.ID().String(),
-			r.Caller.ID.String(),
-			r.Upstream.LocalPort,
-			r.upCluster(),
-			r.Upstream.ID.String(),
-		)
-	}
-	fmt.Fprintf(w, "\t\t\t\t\t\t\n")
-
-	w.Flush()
-	return buf.String()
+	return topoutil.RenderRelationships(ships)
 }
 
-type Relationship struct {
-	Caller   *topology.Service
-	Upstream *topology.Upstream
-}
-
-func (r Relationship) String() string {
-	return fmt.Sprintf(
-		"%s on %s in %s via :%d => %s in %s",
-		r.Caller.ID.String(),
-		r.Caller.Node.ID().String(),
-		r.downCluster(),
-		r.Upstream.LocalPort,
-		r.Upstream.ID.String(),
-		r.upCluster(),
-	)
-}
-
-func (r Relationship) downCluster() string {
-	return r.Caller.Node.Cluster
-}
-
-func (r Relationship) upCluster() string {
-	return r.Upstream.Cluster
-}
+// Deprecated: use topoutil.Relationship
+type Relationship = topoutil.Relationship
