@@ -199,12 +199,6 @@ const (
 identity %q {
   policy = "write"
 }
-service_prefix "" {
-  policy = "read"
-}
-node_prefix "" {
-  policy = "read"
-}
 `
 	workloadIdentityHACKEntRules = `
 partition %q {
