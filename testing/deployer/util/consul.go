@@ -27,8 +27,6 @@ func DialExposedGRPCConn(
 		return nil, nil, fmt.Errorf("cannot dial server grpc on port %d", exposedServerGRPCPort)
 	}
 
-	// TODO: figure this out on macs
-
 	cfg := discovery.Config{
 		Addresses: "127.0.0.1",
 		GRPCPort:  exposedServerGRPCPort,
