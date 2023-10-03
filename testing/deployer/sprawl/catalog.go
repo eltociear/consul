@@ -194,7 +194,7 @@ func (s *Sprawl) registerServicesForDataplaneInstances(cluster *topology.Cluster
 
 		for _, svc := range node.Services {
 			if node.IsV2() {
-				pending := serviceInstanceToResources(cluster, node, svc)
+				pending := serviceInstanceToResources(node, svc)
 
 				if _, ok := identityInfo[svc.ID]; !ok {
 					identityInfo[svc.ID] = pending.WorkloadIdentity
@@ -493,7 +493,6 @@ type ServiceResources struct {
 }
 
 func serviceInstanceToResources(
-	cluster *topology.Cluster,
 	node *topology.Node,
 	svc *topology.Service,
 ) *ServiceResources {
