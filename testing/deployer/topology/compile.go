@@ -188,8 +188,8 @@ func compile(logger hclog.Logger, raw *Config, prev *Topology) (*Topology, error
 			res.Id.Tenancy.Namespace = NamespaceOrDefault(res.Id.Tenancy.Namespace)
 
 			switch {
-			// ComputedTrafficPermissionsType
-			case util.EqualType(pbauth.WorkloadIdentityType, res.Id.GetType()):
+			case util.EqualType(pbauth.ComputedTrafficPermissionsType, res.Id.GetType()),
+				util.EqualType(pbauth.WorkloadIdentityType, res.Id.GetType()):
 				fallthrough
 			case util.EqualType(pbmesh.ComputedRoutesType, res.Id.GetType()),
 				util.EqualType(pbmesh.ProxyStateTemplateType, res.Id.GetType()):
