@@ -506,19 +506,13 @@ func serviceInstanceToResources(
 	}
 
 	var (
-		wlPorts  = map[string]*pbcatalog.WorkloadPort{}
-		svcPorts []*pbcatalog.ServicePort
+		wlPorts = map[string]*pbcatalog.WorkloadPort{}
 	)
 	for name, port := range svc.Ports {
 		wlPorts[name] = &pbcatalog.WorkloadPort{
 			Port:     uint32(port),
 			Protocol: pbcatalog.Protocol_PROTOCOL_TCP,
 		}
-
-		svcPorts = append(svcPorts, &pbcatalog.ServicePort{
-			TargetPort: name,
-			Protocol:   pbcatalog.Protocol_PROTOCOL_TCP,
-		})
 	}
 
 	var (
