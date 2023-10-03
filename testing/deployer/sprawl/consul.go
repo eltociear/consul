@@ -23,7 +23,7 @@ func (s *Sprawl) getResourceClient(clusterName string) pbresource.ResourceServic
 
 func (s *Sprawl) getManagementTokenContext(ctx context.Context, clusterName string) context.Context {
 	mgmtToken := s.secrets.ReadGeneric(clusterName, secrets.BootstrapToken)
-
+	//nolint:staticcheck
 	return context.WithValue(ctx, "x-consul-token", mgmtToken)
 }
 
