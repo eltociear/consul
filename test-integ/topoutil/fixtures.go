@@ -100,7 +100,10 @@ func NewTopologyMeshGatewaySet(
 			Partition: partition,
 			Name:      name,
 			Services: []*topology.Service{{
-				ID:             topology.ServiceID{Name: "mesh-gateway"},
+				ID: topology.ServiceID{
+					Name:      "mesh-gateway",
+					Partition: ConfigEntryPartition(partition),
+				},
 				Port:           8443,
 				EnvoyAdminPort: 19000,
 				IsMeshGateway:  true,
