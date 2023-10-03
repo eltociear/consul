@@ -103,14 +103,12 @@ func (s *SimpleTopologySuite) TestBasicSingleportExplicitDestination() {
 			if u.ID.PartitionOrDefault() == "default" {
 				clusterPrefix = dotjoin(u.PortName, u.ID.Name, u.ID.Namespace, u.Cluster, "internal")
 			} else {
-				//                      http.       single-server.nsa.         part1.          dc1.       internal-v1.1ebbb618-d959-21b7-5ac6-51acd830349b.consul
 				clusterPrefix = dotjoin(u.PortName, u.ID.Name, u.ID.Namespace, u.ID.Partition, u.Cluster, "internal-v1")
 			}
 		} else {
 			clusterPrefix = dotjoin(u.ID.Name, u.ID.Namespace, u.Peer, "external")
 		}
 
-		t.Logf("LOOKING FOR %s", clusterPrefix)
 		asserter.UpstreamEndpointStatus(t, svc, clusterPrefix+".", "HEALTHY", 1)
 		asserter.HTTPServiceEchoes(t, svc, u.LocalPort, "")
 		asserter.FortioFetch2FortioName(t, svc, u, cluster.Name, u.ID)
@@ -128,7 +126,6 @@ func (s *SimpleTopologySuite) topologyConfig(t *testing.T) *topology.Config {
 	const clusterName = "dc1"
 
 	servers := topoutil.NewTopologyServerSet(clusterName+"-server", 3, []string{clusterName, "wan"}, nil)
-	// servers := topoutil.NewTopologyServerSet(clusterName+"-server", 1, []string{clusterName, "wan"}, nil)
 
 	cluster := &topology.Cluster{
 		Enterprise: utils.IsEnterprise(),
@@ -147,8 +144,8 @@ func (s *SimpleTopologySuite) topologyConfig(t *testing.T) *topology.Config {
 		s.topologyConfigAddNodes(t, cluster, nodeName, "part1", "default")
 		s.topologyConfigAddNodes(t, cluster, nodeName, "part1", "nsa")
 		s.topologyConfigAddNodes(t, cluster, nodeName, "default", "nsa")
-		// s.topologyConfigAddNodes(t, cluster, nodeName, "part1", "nsA")
-		// s.topologyConfigAddNodes(t, cluster, nodeName, "default", "nsA")
+		s.topologyConfigAddNodes(t, cluster, nodeName, "part1", "nsA")
+		s.topologyConfigAddNodes(t, cluster, nodeName, "default", "nsA")
 	}
 
 	return &topology.Config{
