@@ -144,8 +144,6 @@ func (s *SimpleTopologySuite) topologyConfig(t *testing.T) *topology.Config {
 		s.topologyConfigAddNodes(t, cluster, nodeName, "part1", "default")
 		s.topologyConfigAddNodes(t, cluster, nodeName, "part1", "nsa")
 		s.topologyConfigAddNodes(t, cluster, nodeName, "default", "nsa")
-		s.topologyConfigAddNodes(t, cluster, nodeName, "part1", "nsa")
-		s.topologyConfigAddNodes(t, cluster, nodeName, "default", "nsa")
 	}
 
 	return &topology.Config{
