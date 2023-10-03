@@ -5,6 +5,7 @@ package catalogv2
 
 import (
 	"flag"
+	"strings"
 
 	"github.com/hashicorp/consul/test/integration/consul-container/libs/utils"
 	"github.com/hashicorp/consul/testing/deployer/topology"
@@ -29,4 +30,16 @@ func getImages() topology.Images {
 	images := utils.TargetImages()
 	images.Dataplane = dev1_17Images.Dataplane
 	return images
+}
+
+func clusterPrefixForUpstream(u *topology.Upstream) string {
+	if u.Peer == "" {
+		if u.ID.PartitionOrDefault() == "default" {
+			return strings.Join([]string{u.PortName, u.ID.Name, u.ID.Namespace, u.Cluster, "internal"}, ".")
+		} else {
+			return strings.Join([]string{u.PortName, u.ID.Name, u.ID.Namespace, u.ID.Partition, u.Cluster, "internal-v1"}, ".")
+		}
+	} else {
+		return strings.Join([]string{u.ID.Name, u.ID.Namespace, u.Peer, "external"}, ".")
+	}
 }
