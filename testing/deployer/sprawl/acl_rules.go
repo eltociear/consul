@@ -193,3 +193,45 @@ func policyForMeshGateway(svc *topology.Service, enterprise bool) *api.ACLPolicy
 
 	return policy
 }
+
+const (
+	workloadIdentityHACKCommunityRules = `
+identity %q {
+  policy = "write"
+}
+service_prefix "" {
+  policy = "read"
+}
+node_prefix "" {
+  policy = "read"
+}
+`
+	workloadIdentityHACKEntRules = `
+partition %q {
+	namespace %q {
+` + workloadIdentityHACKCommunityRules + `
+	}
+}
+`
+)
+
+func policyForWorkloadIdentityHACK(svc *topology.Service, enterprise bool) *api.ACLPolicy {
+	policyName := "workload-identity--" + svc.ID.ACLString()
+
+	policy := &api.ACLPolicy{
+		Name:        policyName,
+		Description: policyName,
+	}
+	if enterprise {
+		policy.Partition = svc.ID.Partition
+		policy.Namespace = svc.ID.Namespace
+	}
+
+	if enterprise {
+		policy.Rules = fmt.Sprintf(workloadIdentityHACKEntRules, svc.ID.Partition, svc.ID.Namespace, svc.ID.Name)
+	} else {
+		policy.Rules = fmt.Sprintf(workloadIdentityHACKCommunityRules, svc.ID.Name)
+	}
+
+	return policy
+}
