@@ -60,7 +60,7 @@ func (s *SimpleTopologySuite) SetupSuite() {
 	s.sprawl = sprawltest.Launch(s.T(), cfg)
 }
 
-func (s *SimpleTopologySuite) TestBasicSingleportExplicitDestination() {
+func (s *SimpleTopologySuite) TestBasicExplicitDestination() {
 	t := s.T()
 
 	var (
