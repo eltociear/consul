@@ -561,7 +561,7 @@ func serviceInstanceToResources(
 			Resource: &pbresource.Resource{
 				Id: &pbresource.ID{
 					Type:    pbcatalog.HealthStatusType,
-					Name:    svc.ID.Name + "-check-0",
+					Name:    svc.Workload + "-check-0",
 					Tenancy: tenancy,
 				},
 			},
