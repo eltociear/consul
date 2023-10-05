@@ -3,4 +3,4 @@
 
 package topology
 
-const DefaultDataplaneImage = "hashicorp/consul-dataplane:1.2.2"
+//go:generate ../update-latest-versions.sh
