@@ -127,7 +127,7 @@ func (ct *commonTopo) Launch(t *testing.T) {
 // tests that use Relaunch might want to call this again afterwards
 func (ct *commonTopo) postLaunchChecks(t *testing.T) {
 	t.Logf("TESTING RELATIONSHIPS: \n%s",
-		renderRelationships(computeRelationships(ct.Sprawl.Topology())),
+		topology.RenderRelationships(ct.Sprawl.Topology().ComputeRelationships()),
 	)
 
 	// check that exports line up as expected
