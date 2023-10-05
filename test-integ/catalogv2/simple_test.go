@@ -262,32 +262,28 @@ func TestBasic_L4_ExplicitDestination(t *testing.T) {
 		libassert.CatalogV2ServiceHasEndpointCount(t, clientV2, name, nil, 1)
 	}
 
-	check := func(t *testing.T, ship topoutil.Relationship) {
-		var (
-			svc           = ship.Caller
-			u             = ship.Upstream
-			clusterPrefix string
-		)
-
-		if u.Peer == "" {
-			if u.ID.PartitionOrDefault() == "default" {
-				clusterPrefix = strings.Join([]string{u.PortName, u.ID.Name, u.ID.Namespace, u.Cluster, "internal"}, ".")
-			} else {
-				clusterPrefix = strings.Join([]string{u.PortName, u.ID.Name, u.ID.Namespace, u.ID.Partition, u.Cluster, "internal-v1"}, ".")
-			}
-		} else {
-			clusterPrefix = strings.Join([]string{u.ID.Name, u.ID.Namespace, u.Peer, "external"}, ".")
-		}
-
-		asserter.UpstreamEndpointStatus(t, svc, clusterPrefix+".", "HEALTHY", 1)
-		asserter.HTTPServiceEchoes(t, svc, u.LocalPort, "")
-		asserter.FortioFetch2FortioName(t, svc, u, cluster.Name, u.ID)
-	}
-
 	// Check relationships
 	for _, ship := range ships {
 		t.Run("relationship: "+ship.String(), func(t *testing.T) {
-			check(t, ship)
+			var (
+				svc           = ship.Caller
+				u             = ship.Upstream
+				clusterPrefix string
+			)
+
+			if u.Peer == "" {
+				if u.ID.PartitionOrDefault() == "default" {
+					clusterPrefix = strings.Join([]string{u.PortName, u.ID.Name, u.ID.Namespace, u.Cluster, "internal"}, ".")
+				} else {
+					clusterPrefix = strings.Join([]string{u.PortName, u.ID.Name, u.ID.Namespace, u.ID.Partition, u.Cluster, "internal-v1"}, ".")
+				}
+			} else {
+				clusterPrefix = strings.Join([]string{u.ID.Name, u.ID.Namespace, u.Peer, "external"}, ".")
+			}
+
+			asserter.UpstreamEndpointStatus(t, svc, clusterPrefix+".", "HEALTHY", 1)
+			asserter.HTTPServiceEchoes(t, svc, u.LocalPort, "")
+			asserter.FortioFetch2FortioName(t, svc, u, cluster.Name, u.ID)
 		})
 	}
 }
