@@ -101,12 +101,12 @@ func (s *SimpleTopologySuite) TestBasicExplicitDestination() {
 
 		if u.Peer == "" {
 			if u.ID.PartitionOrDefault() == "default" {
-				clusterPrefix = dotjoin(u.PortName, u.ID.Name, u.ID.Namespace, u.Cluster, "internal")
+				clusterPrefix = strings.Join([]string{u.PortName, u.ID.Name, u.ID.Namespace, u.Cluster, "internal"}, ".")
 			} else {
-				clusterPrefix = dotjoin(u.PortName, u.ID.Name, u.ID.Namespace, u.ID.Partition, u.Cluster, "internal-v1")
+				clusterPrefix = strings.Join([]string{u.PortName, u.ID.Name, u.ID.Namespace, u.ID.Partition, u.Cluster, "internal-v1"}, ".")
 			}
 		} else {
-			clusterPrefix = dotjoin(u.ID.Name, u.ID.Namespace, u.Peer, "external")
+			clusterPrefix = strings.Join([]string{u.ID.Name, u.ID.Namespace, u.Peer, "external"}, ".")
 		}
 
 		asserter.UpstreamEndpointStatus(t, svc, clusterPrefix+".", "HEALTHY", 1)
@@ -310,8 +310,4 @@ func (s *SimpleTopologySuite) topologyConfigAddNodes(
 		singleportTrafficPerms,
 		multiportTrafficPerms,
 	)
-}
-
-func dotjoin(parts ...string) string {
-	return strings.Join(parts, ".")
 }
