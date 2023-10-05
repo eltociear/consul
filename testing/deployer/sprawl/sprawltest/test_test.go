@@ -6,7 +6,6 @@ package sprawltest_test
 import (
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/hashicorp/consul/api"
 	pbauth "github.com/hashicorp/consul/proto-public/pbauth/v2beta1"
@@ -24,7 +23,6 @@ func TestSprawl_CatalogV2(t *testing.T) {
 
 	cfg := &topology.Config{
 		Images: topology.Images{
-			// ConsulEnterprise: "consul-dev:latest",
 			ConsulCE:         "hashicorppreview/consul:1.17-dev",
 			ConsulEnterprise: "hashicorppreview/consul-enterprise:1.17-dev",
 			Dataplane:        "hashicorppreview/consul-dataplane:1.3-dev",
@@ -151,8 +149,6 @@ func TestSprawl_CatalogV2(t *testing.T) {
 			t.Logf("%s: follower = %s", cluster.Name, f.ID())
 		}
 	}
-
-	time.Sleep(99 * time.Minute)
 }
 
 func TestSprawl(t *testing.T) {

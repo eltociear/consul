@@ -415,7 +415,8 @@ func compile(logger hclog.Logger, raw *Config, prev *Topology) (*Topology, error
 						return nil, fmt.Errorf("explicit upstreams cannot use port names in v1")
 					}
 					if u.PortName == "" && n.IsV2() {
-						return nil, fmt.Errorf("explicit upstreams must use port names in v2")
+						// Assume this is a v1->v2 conversion and name it.
+						u.PortName = "legacy"
 					}
 				}
 
