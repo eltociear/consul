@@ -240,7 +240,7 @@ func TestBasic_L4_ExplicitDestination(t *testing.T) {
 		topo    = sp.Topology()
 		cluster = topo.Clusters["dc1"]
 
-		ships = topoutil.ComputeRelationships(topo)
+		ships = topo.ComputeRelationships()
 	)
 
 	clientV1, err := sp.APIClientForNode("dc1", cluster.FirstServer().ID(), "")
@@ -248,7 +248,7 @@ func TestBasic_L4_ExplicitDestination(t *testing.T) {
 
 	clientV2 := sp.ResourceServiceClientForCluster(cluster.Name)
 
-	topoutil.RenderRelationships(ships)
+	topology.RenderRelationships(ships)
 
 	// Make sure things are truly in v2 not v1.
 	for _, name := range []string{

@@ -1,21 +1,19 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package topoutil
+package topology
 
 import (
 	"bytes"
 	"fmt"
 	"text/tabwriter"
-
-	"github.com/hashicorp/consul/testing/deployer/topology"
 )
 
 // ComputeRelationships will analyze a full topology and generate all of the
 // downstream/upstream information for all of them.
-func ComputeRelationships(topo *topology.Topology) []Relationship {
+func (t *Topology) ComputeRelationships() []Relationship {
 	var out []Relationship
-	for _, cluster := range topo.Clusters {
+	for _, cluster := range t.Clusters {
 		for _, n := range cluster.Nodes {
 			for _, s := range n.Services {
 				for _, u := range s.Upstreams {
@@ -54,8 +52,8 @@ func RenderRelationships(ships []Relationship) string {
 }
 
 type Relationship struct {
-	Caller   *topology.Service
-	Upstream *topology.Upstream
+	Caller   *Service
+	Upstream *Upstream
 }
 
 func (r Relationship) String() string {

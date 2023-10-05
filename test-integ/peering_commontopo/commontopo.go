@@ -467,16 +467,3 @@ func NewFortioServiceWithDefaults(
 ) *topology.Service {
 	return topoutil.NewFortioServiceWithDefaults(cluster, sid, topology.NodeVersionV1, mut)
 }
-
-// Deprecated: topoutil.ComputeRelationships
-func computeRelationships(topo *topology.Topology) []Relationship {
-	return topoutil.ComputeRelationships(topo)
-}
-
-// Deprecated: topoutil.RenderRelationships
-func renderRelationships(ships []Relationship) string {
-	return topoutil.RenderRelationships(ships)
-}
-
-// Deprecated: use topoutil.Relationship
-type Relationship = topoutil.Relationship
