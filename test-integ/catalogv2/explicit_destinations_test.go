@@ -39,7 +39,7 @@ import (
 // - default/nsa
 // - part1/nsa
 func TestBasicL4ExplicitDestination(t *testing.T) {
-	cfg := testBasicL4ExplicitDestinationCreator{}.NewConfig()
+	cfg := testBasicL4ExplicitDestinationCreator{}.NewConfig(t)
 
 	sp := sprawltest.Launch(t, cfg)
 
@@ -99,7 +99,7 @@ func TestBasicL4ExplicitDestination(t *testing.T) {
 
 type testBasicL4ExplicitDestinationCreator struct{}
 
-func (c testBasicL4ExplicitDestinationCreator) NewConfig() *topology.Config {
+func (c testBasicL4ExplicitDestinationCreator) NewConfig(t *testing.T) *topology.Config {
 	const clusterName = "dc1"
 
 	servers := topoutil.NewTopologyServerSet(clusterName+"-server", 3, []string{clusterName, "wan"}, nil)
@@ -116,11 +116,11 @@ func (c testBasicL4ExplicitDestinationCreator) NewConfig() *topology.Config {
 		return fmt.Sprintf("%s-box%d", clusterName, lastNode)
 	}
 
-	c.topologyConfigAddNodes(cluster, nodeName, "default", "default")
+	c.topologyConfigAddNodes(t, cluster, nodeName, "default", "default")
 	if cluster.Enterprise {
-		c.topologyConfigAddNodes(cluster, nodeName, "part1", "default")
-		c.topologyConfigAddNodes(cluster, nodeName, "part1", "nsa")
-		c.topologyConfigAddNodes(cluster, nodeName, "default", "nsa")
+		c.topologyConfigAddNodes(t, cluster, nodeName, "part1", "default")
+		c.topologyConfigAddNodes(t, cluster, nodeName, "part1", "nsa")
+		c.topologyConfigAddNodes(t, cluster, nodeName, "default", "nsa")
 	}
 
 	return &topology.Config{
@@ -136,6 +136,7 @@ func (c testBasicL4ExplicitDestinationCreator) NewConfig() *topology.Config {
 }
 
 func (c testBasicL4ExplicitDestinationCreator) topologyConfigAddNodes(
+	t *testing.T,
 	cluster *topology.Cluster,
 	nodeName func() string,
 	partition,
