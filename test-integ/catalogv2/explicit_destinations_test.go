@@ -57,7 +57,7 @@ func TestBasicL4ExplicitDestination(t *testing.T) {
 
 	clientV2 := sp.ResourceServiceClientForCluster(cluster.Name)
 
-	topology.RenderRelationships(ships)
+	t.Log(topology.RenderRelationships(ships))
 
 	// Make sure things are truly in v2 not v1.
 	for _, name := range []string{
