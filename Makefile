@@ -441,7 +441,7 @@ codegen: codegen-tools ## Deep copy
 	# Special case for MPL headers in /api and /sdk
 	cd api && find . -type f -name '*.go' -exec sed -i '1,3d' {} + &&  copywrite headers
 	cd sdk && find . -type f -name '*.go' -exec sed -i '1,3d' {} + &&  copywrite headers
-
+	
 print-%  : ; @echo $($*) ## utility to echo a makefile variable (i.e. 'make print-GOPATH')
 
 .PHONY: module-versions
