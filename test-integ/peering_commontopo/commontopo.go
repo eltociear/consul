@@ -311,14 +311,24 @@ func ConfigEntryPartition(p string) string {
 	return topoutil.ConfigEntryPartition(p)
 }
 
-// Deprecated: topoutil.DisableNode
+// DisableNode is a no-op if the node is already disabled.
 func DisableNode(t *testing.T, cfg *topology.Config, clusterName string, nid topology.NodeID) *topology.Config {
-	return topoutil.DisableNode(t, cfg, clusterName, nid)
+	changed, err := cfg.DisableNode(clusterName, nid)
+	require.NoError(t, err)
+	if changed {
+		t.Logf("disabling node %s in cluster %s", nid.String(), clusterName)
+	}
+	return cfg
 }
 
-// Deprecated: topoutil.EnableNode
+// EnableNode is a no-op if the node is already enabled.
 func EnableNode(t *testing.T, cfg *topology.Config, clusterName string, nid topology.NodeID) *topology.Config {
-	return topoutil.EnableNode(t, cfg, clusterName, nid)
+	changed, err := cfg.EnableNode(clusterName, nid)
+	require.NoError(t, err)
+	if changed {
+		t.Logf("enabling node %s in cluster %s", nid.String(), clusterName)
+	}
+	return cfg
 }
 
 func setupGlobals(clu *topology.Cluster) {
