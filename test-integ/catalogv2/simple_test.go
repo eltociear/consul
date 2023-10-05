@@ -307,19 +307,6 @@ func (s *SimpleTopologySuite) topologyConfigAddNodes(
 	)
 
 	cluster.InitialResources = append(cluster.InitialResources,
-		// sprawltest.MustSetResourceData(t, &pbresource.Resource{
-		// 	Id: &pbresource.ID{
-		// 		Type: pbmesh.HTTPRouteType,
-		// 		Name: "test-http-route",
-		// 	},
-		// }, &pbmesh.HTTPRoute{
-		// 	ParentRefs: []*pbmesh.ParentReference{{
-		// 		Ref: &pbresource.Reference{
-		// 			Type: pbcatalog.ServiceType,
-		// 			Name: "test",
-		// 		},
-		// 	}},
-		// }),
 		singleportTrafficPerms,
 		multiportTrafficPerms,
 	)
