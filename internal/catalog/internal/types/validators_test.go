@@ -4,6 +4,7 @@
 package types
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
@@ -280,6 +281,32 @@ func TestValidateSelector(t *testing.T) {
 					},
 				},
 			},
+		},
+		"bad-filter": {
+			selector: &pbcatalog.WorkloadSelector{
+				Prefixes: []string{"foo", "bar"},
+				Filter:   "garbage.value == zzz",
+			},
+			allowEmpty: false,
+			err: &multierror.Error{
+				Errors: []error{
+					resource.ErrInvalidField{
+						Name: "filter",
+						Wrapped: fmt.Errorf(
+							`filter "garbage.value == zzz" is invalid: %w`,
+							errors.New(`Selector "garbage" is not valid`),
+						),
+					},
+				},
+			},
+		},
+		"good-filter": {
+			selector: &pbcatalog.WorkloadSelector{
+				Prefixes: []string{"foo", "bar"},
+				Filter:   "metadata.zone == west1",
+			},
+			allowEmpty: false,
+			err:        nil,
 		},
 	}
 

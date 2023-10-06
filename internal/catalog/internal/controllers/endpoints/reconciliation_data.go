@@ -5,6 +5,7 @@ package endpoints
 
 import (
 	"context"
+	"fmt"
 	"sort"
 
 	"google.golang.org/grpc/codes"
@@ -169,6 +170,14 @@ func gatherWorkloadsForService(ctx context.Context, rt controller.Runtime, svc *
 		workloadNames[rsp.Resource.Id.Name] = struct{}{}
 	}
 
+	if sel.GetFilter() != "" && len(workloads) > 0 {
+		var err error
+		workloads, err = resource.FilterResourcesByMetadata(workloads, sel.GetFilter())
+		if err != nil {
+			return nil, fmt.Errorf("error filtering results by metadata: %w", err)
+		}
+	}
+
 	// Sorting ensures deterministic output. This will help for testing but
 	// the real reason to do this is so we will be able to diff the set of
 	// workloads endpoints to determine if we need to update them.
@@ -177,4 +186,8 @@ func gatherWorkloadsForService(ctx context.Context, rt controller.Runtime, svc *
 	})
 
 	return workloads, nil
+}
+
+type fieldDetails struct {
+	Meta map[string]string `bexpr:"meta"`
 }

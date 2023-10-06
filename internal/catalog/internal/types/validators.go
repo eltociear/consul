@@ -95,7 +95,7 @@ func validateSelector(sel *pbcatalog.WorkloadSelector, allowEmpty bool) error {
 		return resource.ErrEmpty
 	}
 
-	var err error
+	var merr error
 
 	// Validate that all the exact match names are non-empty. This is
 	// mostly for the sake of not admitting values that should always
@@ -103,7 +103,7 @@ func validateSelector(sel *pbcatalog.WorkloadSelector, allowEmpty bool) error {
 	// This is because workloads must have non-empty names.
 	for idx, name := range sel.Names {
 		if name == "" {
-			err = multierror.Append(err, resource.ErrInvalidListElement{
+			merr = multierror.Append(merr, resource.ErrInvalidListElement{
 				Name:    "names",
 				Index:   idx,
 				Wrapped: resource.ErrEmpty,
@@ -111,7 +111,14 @@ func validateSelector(sel *pbcatalog.WorkloadSelector, allowEmpty bool) error {
 		}
 	}
 
-	return err
+	if err := resource.ValidateMetadataFilter(sel.GetFilter()); err != nil {
+		merr = multierror.Append(merr, resource.ErrInvalidField{
+			Name:    "filter",
+			Wrapped: err,
+		})
+	}
+
+	return merr
 }
 
 func validateIPAddress(ip string) error {
