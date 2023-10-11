@@ -470,6 +470,9 @@ func (s *Sprawl) waitForLocalWrites(cluster *topology.Cluster, token string) {
 }
 
 func (s *Sprawl) waitForClientAntiEntropyOnce(cluster *topology.Cluster) error {
+	if cluster.EnableV2 {
+		return nil // v1 catalog is disabled when v2 catalog is enabled
+	}
 	var (
 		client = s.clients[cluster.Name]
 		logger = s.logger.With("cluster", cluster.Name)
