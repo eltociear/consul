@@ -4,15 +4,17 @@
 package types
 
 import (
+	"github.com/hashicorp/consul/internal/catalog"
 	"github.com/hashicorp/consul/internal/resource"
 	pbmesh "github.com/hashicorp/consul/proto-public/pbmesh/v2beta1"
 )
 
-func RegisterUpstreamsConfiguration(r resource.Registry) {
+func RegisterDestinationsConfiguration(r resource.Registry) {
 	r.Register(resource.Registration{
 		Type:     pbmesh.DestinationsConfigurationType,
 		Proto:    &pbmesh.DestinationsConfiguration{},
 		Scope:    resource.ScopeNamespace,
 		Validate: nil,
+		ACLs:     catalog.ACLHooksForWorkloadSelectingType[*pbmesh.DestinationsConfiguration](),
 	})
 }

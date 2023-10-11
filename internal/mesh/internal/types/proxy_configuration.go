@@ -4,6 +4,7 @@
 package types
 
 import (
+	"github.com/hashicorp/consul/internal/catalog"
 	"github.com/hashicorp/consul/internal/resource"
 	pbmesh "github.com/hashicorp/consul/proto-public/pbmesh/v2beta1"
 )
@@ -15,5 +16,6 @@ func RegisterProxyConfiguration(r resource.Registry) {
 		Scope: resource.ScopeNamespace,
 		// TODO(rb): add validation for proxy configuration
 		Validate: nil,
+		ACLs:     catalog.ACLHooksForWorkloadSelectingType[*pbmesh.ProxyConfiguration](),
 	})
 }

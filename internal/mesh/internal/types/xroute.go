@@ -284,7 +284,7 @@ func xRouteACLHooks[R XRouteData]() *resource.ACLHooks {
 	hooks := &resource.ACLHooks{
 		Read:  aclReadHookXRoute[R],
 		Write: aclWriteHookXRoute[R],
-		List:  aclListHookXRoute[R],
+		List:  resource.NoOpACLListHook,
 	}
 
 	return hooks
@@ -343,11 +343,5 @@ func aclWriteHookXRoute[R XRouteData](authorizer acl.Authorizer, _ *acl.Authoriz
 		}
 	}
 
-	return nil
-}
-
-func aclListHookXRoute[R XRouteData](authorizer acl.Authorizer, authzContext *acl.AuthorizerContext) error {
-	// No-op List permission as we want to default to filtering resources
-	// from the list using the Read enforcement.
 	return nil
 }
